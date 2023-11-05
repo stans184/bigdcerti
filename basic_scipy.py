@@ -239,6 +239,9 @@ method : kendall
 -> ols 함수에서 자동으로 one-hot encoding을 진행
 -> 다중 공산성이 발생하는 문제가 있고, ols 자체적으로 해결해주기도 함
 -> 내가 직접 해결하고 싶다면, pd.get_dummies(df, drop_first=True)
+
+[로지스틱 회귀 분석]
+from statsmodels.formula.api import logit
 """
 
 """ 상관관계 분석 """
@@ -472,7 +475,21 @@ Kurtosis:                       7.397   Cond. No.                         382.
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+"""
 
+""" 로지스틱 회귀 분석 """
+from statsmodels.formula.api import logit
+model = logit('Survived ~ C(Gender) + SibSp + Parch + Fare', data=df).fit()
+
+
+""" odds """
+"""
+odds 비 : 두 odds의 비율
+- 로지스틱 회귀에서는 오즈비를 사용해 독립변수가 한 단위 변할 때, 종속 변수의 오즈가 어떻게 변하는지 나타낸다.
+    - 오즈비 > 1 : 독립변수의 증가가 종속변수의 확률을 증가
+    - 오즈비 < 1 ; 독립변수의 증가가 종속변수의 확률을 감소
+- odds 비를 구하는 방법
+    > 특정 param의 계수가 a라면, 자연상수 e의 a제곱 : np.exp(a)
 """
 
 

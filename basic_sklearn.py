@@ -18,6 +18,11 @@ from sklearn.preprocessing import RobustScaler
 
 scaler = RobustScaler()
 # 학습시켜야 하는 training data
+# 들어가는 데이터는 DataFrame 형태여야 한다
+# ex1) df['qsec'].values.reshape(-1,1)
+# ex2) df[['qsec']]
+# series 형태로 바로 처리가 가능한 minmax_scale 과 같은 함수를 알아두는 것도 좋은 방법
+# df['qsec'] = minmax_scale(df['qsec'])
 scaler.fit_transform()
 # 제출해야 하는 test data
 scaler.transform()

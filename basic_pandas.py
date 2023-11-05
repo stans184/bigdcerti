@@ -4,6 +4,15 @@ import numpy as np
 # 모든 컬럼을 보여주는 pandas option
 pd.set_option('display.max_columns', None)
 
+# [Tip] 지수표현식(과학적표기법) 사용 X
+pd.options.display.float_format = '{:.5f}'.format
+
+# [Tip] set 타입으로 변경하면 비교 가능함
+a = set(X_train['주구매상품'].unique())
+b = set(X_test['주구매상품'].unique())
+print(a-b)
+print(a.difference(b))
+
 # DataFrame으로 만들기
 data = {
     "메뉴": ['아메리카노', '카페라떼', '카페모카', '바닐라라떼', '녹차', '초코라떼', '바닐라콜드브루'],
