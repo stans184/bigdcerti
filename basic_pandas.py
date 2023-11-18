@@ -64,6 +64,8 @@ print(cafe['menu'].unique())
 print(cafe['price'].unique())
 # 항목별 개수
 print(cafe['menu'].value_counts())
+# 각 항목의 비율
+print(df['test'].value_counts(normalize=True))
 
 # 데이터 프레임 만들기 (할인율과 칼로리 -> 문자열)
 data = {
@@ -191,6 +193,18 @@ df[cond]
 df['가격'].quantile(0.75)
 # 최빈값
 df['원두'].mode()[0]
+
+df['날짜'] = pd.to_datetime(df['날짜'], format='%Y년 %m월')
+# 혹은, string으로 취급해서 slicing 하기
+df['날짜'].str[:4]
+
+""" 행별 총계를 저장하기 """
+# 2번쨰 열 이후를 모두 선택해서
+# 합계를 저장
+df['전교생수'] = df.iloc[:, 2:].sum(axis=1)
+
+""" 가장 큰 값의 index 가져오기 """
+df['교사당학생'].idxmax()
 
 
 """ 외부 함수 적용 """

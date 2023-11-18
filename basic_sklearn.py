@@ -38,8 +38,16 @@ np.exp(np.log1p(X_train['fnlwgt'])).hist()
 
 
 """ Encoding """
+## label encoding
+## Series.astype('category').cat.codes
+train['Gender'] = train['Gender'].astype('category').cat.codes
+
 # Label Encoding
 # 1,2,3... 등의 숫자로 구분시키는 것
+# 라벨 인코딩은 각 범주를 정수로 매핑하기 때문에 범주 간의 상대적인 크기를 고려합니다. 
+# 이는 순서가 있는 범주형 데이터에 유용합니다.
+# 단일 열에 적용 가능: LabelEncoder는 주로 단일 열에 적용되며, 해당 열의 범주를 정수로 매핑합니다.
+# 선형 모델에서 유용: 선형 모델과 같이 순서가 있는 범주형 데이터를 고려하는 모델에서 라벨 인코딩이 유용할 수 있습니다.
 from sklearn.preprocessing import LabelEncoder
 le = LabelEncoder()
 # 학습시켜야 하는 training data
@@ -49,6 +57,9 @@ le.transform()
 
 # One-Hot Encoding
 # 결과값이 0 혹은 1이 나오는 encoding
+# 범주 간의 순서를 고려하지 않습니다: 범주 간에 상대적인 크기가 중요하지 않을 때 사용됩니다.
+# 다중 열에 적용 가능: pd.get_dummies와 같은 함수를 사용하여 여러 범주형 열에 동시에 적용할 수 있습니다.
+# 트리 기반 모델에서 유용: 결정 트리와 같은 트리 기반 모델에서 범주형 데이터를 다루는 데에 원핫 인코딩이 유용할 수 있습니다.
 import pandas as pd
 # One_Hot Encoding
 train = pd.get_dummies(train, columns=cols)
@@ -64,6 +75,13 @@ test = pd.get_dummies(test, columns=cols)
 from sklearn.model_selection import train_test_split
 X_tr, X_val, Y_tr, Y_val = train_test_split(X_train, y, test_size=0.2, random_state=2023)
 
+
+""" Logistic Regression """
+from sklearn.linear_model import LogisticRegression
+
+""" Decision Tree """
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import DecisionTreeRegressor
 
 """ LinearRegression """
 from sklearn.linear_model import LinearRegression
