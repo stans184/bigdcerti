@@ -277,7 +277,7 @@ df = pd.DataFrame({
 
 # 선형 회귀 모델 학습
 from statsmodels.formula.api import ols
-model = ols('키 ~ 몸무게', data=df,).fit()
+model = ols('키 ~ 몸무게', data=df).fit()
 
 # 학습 결과 출력
 model.summary()
@@ -662,3 +662,21 @@ C(비료)          2.0  1140.316667   570.158333   6.682993  1.835039e-03
 C(종자):C(비료)    6.0   725.350000   120.891667   1.417007  2.146636e-01
 Residual     108.0  9214.000000    85.314815        NaN           NaN
 """
+
+
+""" 포아송 분포 """
+"""
+stats.poisson.pmf(k, mu)는 Poisson 분포에서 확률 질량 함수(probability mass function, PMF)를 
+계산하는 SciPy의 메소드입니다. 
+여기서 k는 특정 이벤트가 발생한 횟수를 나타내며, mu는 Poisson 분포의 평균 발생 횟수입니다.
+
+그러면 stats.poisson.pmf(5, 3)은 평균 발생 횟수가 3인 Poisson 분포에서 
+특정 이벤트가 5번 발생할 확률을 계산합니다. 즉, 이는 k=5인 경우의 Poisson 분포에서의 확률을 나타냅니다.
+"""
+from scipy.stats import poisson
+
+# 평균 발생 횟수 (하루에 잡지를 구매하는 고객 수)
+lambda_ = 3
+
+# 하루에 정확히 5명의 고객이 잡지를 구매할 확률
+print(poisson.pmf(5, lambda_))

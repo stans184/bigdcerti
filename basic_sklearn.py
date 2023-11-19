@@ -116,6 +116,21 @@ xgb = XGBClassifier(random_state=2023, max_depth=3, n_estimators=100, learning_r
 # learning_rate : 학습률을 설정해주는 hyper parameter, n_estimators와 같이 조정해주어야 한다
 # tree의 개수가 많으면 learning_rate를 낮추는 방식으로 (0.1 ~ 0.01)
 
+
+""" lightGBM """
+# 범주형 데이터를 onehot / label encoding이 필요없음?
+# object type을 category형 type으로 바꿔주면 댐
+train['주구매상품'] = train['주구매상품'].astype('category')
+
+# 결측치를 처리 안해도 되는데.. 이건 상황에 따라서
+
+import lightgbm as lgb
+model = lgb.LGBMClassifier(random_state=2023, max_depth=5, n_estimators=200, learning_rate=0.1)
+model = lgb.LGBMRegressor(random_state=2023, max_depth=3, n_estimators=400, learning_rate=0.05)
+model.fit(X_tr, y_tr)
+model.predict(X_val)
+model.predict_proba(X_val)
+
 """ 회귀 모델 평가 지표 """
 # MSE(Mean Squared Error)
 # error : 낮을수록 좋음
