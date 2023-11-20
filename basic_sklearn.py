@@ -8,6 +8,7 @@
 """ scaling """
 # 민-맥스 스케일링 MinMaxScaler (모든 값이 0과 1사이)
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import minmax_scale
 
 # 표준화 StandardScaler (Z-score 정규화, 평균이 0 표준편차가 1인 표준 정규분포로 변경)
 from sklearn.preprocessing import StandardScaler
@@ -15,6 +16,7 @@ from sklearn.preprocessing import StandardScaler
 # 로버스트 스케일링 : 중앙값과 사분위 값 활용, 이상치 영향 최소화 장점
 # 이상치가 있을 때, MinMaxScaler와 StandardScaler는 변환이 별로 이쁘게 안됨
 from sklearn.preprocessing import RobustScaler
+from sklearn.preprocessing import robust_scale
 
 scaler = RobustScaler()
 # 학습시켜야 하는 training data
@@ -57,6 +59,7 @@ le.transform()
 
 # One-Hot Encoding
 # 결과값이 0 혹은 1이 나오는 encoding
+# 고유값이 너무 많다면, label encoding보다는 one hot encoding이 적합
 # 범주 간의 순서를 고려하지 않습니다: 범주 간에 상대적인 크기가 중요하지 않을 때 사용됩니다.
 # 다중 열에 적용 가능: pd.get_dummies와 같은 함수를 사용하여 여러 범주형 열에 동시에 적용할 수 있습니다.
 # 트리 기반 모델에서 유용: 결정 트리와 같은 트리 기반 모델에서 범주형 데이터를 다루는 데에 원핫 인코딩이 유용할 수 있습니다.
@@ -71,10 +74,9 @@ test = pd.get_dummies(test, columns=cols)
 
 """ 검증용 데이터 분리하기 """
 # test_size를 통해 train과 test를 어느정도 비율로 나눌 것인지 확인
-# random_state를 지정해서 데이터들을 매번 다르게 변환해주는 것도 좋은 작업임
+# random_state를 지정해서 데이터들을 매번 다르게 변환해줌
 from sklearn.model_selection import train_test_split
 X_tr, X_val, Y_tr, Y_val = train_test_split(X_train, y, test_size=0.2, random_state=2023)
-
 
 """ Logistic Regression """
 from sklearn.linear_model import LogisticRegression
@@ -119,7 +121,7 @@ xgb = XGBClassifier(random_state=2023, max_depth=3, n_estimators=100, learning_r
 
 """ lightGBM """
 # 범주형 데이터를 onehot / label encoding이 필요없음?
-# object type을 category형 type으로 바꿔주면 댐
+# object type을 category형 type으로 바꿔주면, lightgbm이 알아서 변경해줌
 train['주구매상품'] = train['주구매상품'].astype('category')
 
 # 결측치를 처리 안해도 되는데.. 이건 상황에 따라서

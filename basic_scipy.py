@@ -19,7 +19,7 @@ basic theory
     2) 정규성 불만족 : 윌콕슨 검정 : wilcoxon(data)
     
 [대응 검정 (모집단 1개, event 전후 검정)]
-1. 샤피로-윌크 검정 (정규성 확인) : shapiro(diff) diff = A-B
+1. 샤피로-윌크 검정 (정규성 확인) : shapiro(diff) diff = A - B
     1) 정규성 만족  : 대응 표본 검정 : ttest_rel(A, B)
     2) 정규성 불만족 : 윌콕슨 검정 : wilcoxon(A, B)
 
@@ -320,7 +320,7 @@ model.pvalues['Intercept']
 
 # 학습된 선형 회귀모델로 예측하기
 # 몸무게가 50 일때, 예측되는 키
-new_data = pd.DataFrame('몸무게' : [50]})
+new_data = pd.DataFrame({'몸무게' : [50]})
 print(model.predict(new_data))
 
 # 잔차 제곱합
@@ -392,6 +392,7 @@ Notes:
 # R 결정계수
 model.rsquared
 # 회귀계수 (기울기)
+# param 과 params의 차이
 model.param # 전체
 model.param['광고비']
 model.param['플랫폼']

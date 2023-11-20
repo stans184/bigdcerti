@@ -142,12 +142,14 @@ cafemenu.isnull().sum()
 # 원두-> 코스타리카로 채우기
 cafemenu['원두'] = cafemenu['원두'].fillna('코스타리카')
 # 최빈값으로 채우기
-X_train['workclass'] = X_train['workclass'].fillna(m)
+X_train['workclass'] = X_train['workclass'].fillna(X_train['workclass'].mode())
 
 
 """ 값 변경 """
 # 문자 변경 : 아메리카노 -> 룽고, 녹차 -> 그린티
 df = cafemenu.replace('아메리카노', '롱고').replace('녹차', '그린티')
+# 데이터의 일부를 변경하고 싶다면, str을 이용해서 변경해야 함
+df = cafemenu.str.replace('블랙', '화이트')
 # 문자 변경2 : dict을 이용한 변경
 d = {'롱고' : '아메리카노', '그린티' : '녹차'}
 cafemenu = cafemenu.replace(d)
