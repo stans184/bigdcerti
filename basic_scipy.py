@@ -680,3 +680,18 @@ lambda_ = 3
 
 # 하루에 정확히 5명의 고객이 잡지를 구매할 확률
 print(poisson.pmf(5, lambda_))
+
+
+"""  """
+# 1. 베르누이 분포: 각 시도의 성공 확률 계산
+total_attempts = len(df)
+number_of_successes = df['Success'].sum()
+success_probability = number_of_successes / total_attempts
+print(success_probability)
+
+# 2. 이항 분포: 100번의 시도 중 정확히 60번 성공할 확률 계산
+from scipy import stats
+n = 100  # 시도 횟수
+k = 60   # 성공 횟수
+probability_of_60_successes = stats.binom.pmf(k, n, success_probability)
+print(probability_of_60_successes)

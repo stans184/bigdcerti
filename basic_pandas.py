@@ -55,6 +55,9 @@ cafe.describe(include='O')
 # 범주형 컬럼 통계값 확인 (train)
 cafe.describe(include='object')
 # 상관관계
+# 상관관계는 1로 갈수록 양의 상관관계
+# -1로 갈수록 음의 상관관계가 강해지는 것
+# 따라서 상관관계의 비교는 상관계수의 절대값 크기로 비교해야 한다
 cafe.corr()
 
 # 항목 종류 수
@@ -134,6 +137,13 @@ cond1 = cafemenu['할인율'] >= 0.2
 cond2 = cafemenu['칼로리'] < 400
 cafemenu[cond1 | cond2]
 
+""" 누적합 """
+# 예시 데이터프레임 생성
+df = pd.DataFrame({'A': [1, 2, 3, 4]})
+# 'A' 열의 누적 합 계산
+cumulative_sum = df['A'].cumsum()
+# 결과 확인
+print(cumulative_sum)
 
 """ 결측치 """
 # 컬럼별 결측치 확인
@@ -144,6 +154,11 @@ cafemenu['원두'] = cafemenu['원두'].fillna('코스타리카')
 # 최빈값으로 채우기
 X_train['workclass'] = X_train['workclass'].fillna(X_train['workclass'].mode())
 
+""" 여 존슨, box-cox 변환값 """
+from sklearn.preprocessing import power_transform
+data = [[11, 12], [23, 22], [34, 35]]
+print(power_transform(data)) # method 디폴트 값은 여-존슨’yeo-johnson’
+print(power_transform(data, method='box-cox'))
 
 """ 값 변경 """
 # 문자 변경 : 아메리카노 -> 룽고, 녹차 -> 그린티
