@@ -695,3 +695,20 @@ n = 100  # 시도 횟수
 k = 60   # 성공 횟수
 probability_of_60_successes = stats.binom.pmf(k, n, success_probability)
 print(probability_of_60_successes)
+
+
+""" 점추정과 구간추정 """
+# 점추정 : pandas의 함수를 이용해서 추정하는 값이라고 생각하면 됨
+# 구간추정 : 평균이 있을 구간을 추정하는 것
+""" 구간추정
+주어진 신뢰 구간을 바탕으로 해당하는 값이 존재할만한 구간을 추정하는 것
+- 신뢰 구간의 정의에 입각해서 도출해도 됨
+신뢰 구간 = 표본 평균 +- 1.96*(표준편차 / sqrt(표본의 크기))  ## 95% 신뢰 수준일 때, Z 값은 1.96
+
+- 혹은 scipy.stats.t.interval 함수를 사용해도 됨
+scipy.stats.t.interval(alpha=0.95, df=자유도(표본크기 - 1), loc=표본평균, scale=표본의 표준편차)
+# 표본의 표준편차 = sample.std() / 표본크기 ** 0.5
+
+"""
+from scipy import stats
+stats.t.interval(0.95, len(df)-1, sample_mean, scale)
