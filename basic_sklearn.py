@@ -11,9 +11,11 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import minmax_scale
 
 # 표준화 StandardScaler (Z-score 정규화, 평균이 0 표준편차가 1인 표준 정규분포로 변경)
+# 주어진 데이터에 이상치가 없고, 정규분포를 따를 때
 from sklearn.preprocessing import StandardScaler
 
 # 로버스트 스케일링 : 중앙값과 사분위 값 활용, 이상치 영향 최소화 장점
+# 주어진 데이터에 이상치가 많을 때
 # 이상치가 있을 때, MinMaxScaler와 StandardScaler는 변환이 별로 이쁘게 안됨
 from sklearn.preprocessing import RobustScaler
 from sklearn.preprocessing import robust_scale
@@ -40,7 +42,17 @@ np.exp(np.log1p(X_train['fnlwgt'])).hist()
 
 
 """ Encoding """
-## label encoding
+# 강사의 생각 : 카테고리가 10개 미만 - one-hot encoding / 10개 이상 - LabelEncoding
+# 각 범주의 성향을 파악하고 하면 더 좋음
+"""
+1. train 과 test 모두 category가 같다면 
+    > one-hot encoding과 labelencoding 모두 상관없음
+2. train의 범주가 test의 범주를 포함한다
+    > LabelEncoding 하거나, 두 범주를 합쳐서(pd.concat) one-hot encoding
+3. test의 범주가 train을 포함하거나, 카테고리가 좀 다르다면
+    > 두 범주를 합쳐서(pd.concat) Encoding을 진행하고 다시 분리
+"""
+## category로 변경 (lightgbm)
 ## Series.astype('category').cat.codes
 train['Gender'] = train['Gender'].astype('category').cat.codes
 
@@ -74,19 +86,20 @@ test = pd.get_dummies(test, columns=cols)
 
 """ 검증용 데이터 분리하기 """
 # test_size를 통해 train과 test를 어느정도 비율로 나눌 것인지 확인
-# random_state를 지정해서 데이터들을 매번 다르게 변환해줌
+# random_state를 지정해서 결과 일관성 유지 / 디버깅 용이
 from sklearn.model_selection import train_test_split
 X_tr, X_val, Y_tr, Y_val = train_test_split(X_train, y, test_size=0.2, random_state=2023)
 
 """ Logistic Regression """
+# 일종의 Classifier, 범주혀여 종속변수
 from sklearn.linear_model import LogisticRegression
+""" Linear Regression """
+# Regressior, 연속형 종속변수
+from sklearn.linear_model import LinearRegression
 
 """ Decision Tree """
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.tree import DecisionTreeRegressor
-
-""" LinearRegression """
-from sklearn.linear_model import LinearRegression
 
 """ RandomForest """
 # 분류 나무
@@ -95,6 +108,9 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import RandomForestRegressor
 rf = RandomForestRegressor(random_state=2023, max_depth=3, n_estimators=100)
 # random_state : ML model을 정해주는 것, 설정해주지 않으면 매번 다른 모델을 불러오게 된다
+
+""" hyper-parameter 튜닝 시 overfitting 주의!! """
+# 너무 깊은 tree로 갈수록, tree의 개수가 너무 커질수록 overfitting 위험
 # max_depth : tree의 깊이를 설정해주는 hyper parameter (3, 5, 7 ... ~ 12)
 # n_estimators : tree의 개수를 설정해주는 hyper parameter (100, 200, 400.. ~1000)
 
@@ -123,7 +139,6 @@ xgb = XGBClassifier(random_state=2023, max_depth=3, n_estimators=100, learning_r
 # 범주형 데이터를 onehot / label encoding이 필요없음?
 # object type을 category형 type으로 바꿔주면, lightgbm이 알아서 변경해줌
 train['주구매상품'] = train['주구매상품'].astype('category')
-
 # 결측치를 처리 안해도 되는데.. 이건 상황에 따라서
 
 import lightgbm as lgb

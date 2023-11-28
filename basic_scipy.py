@@ -15,7 +15,7 @@ basic theory
 
 [단일 검정 (모집단 1개, 한가지 조건을 걸고 검정)]
 1. 샤피로-월크 검정 (정규성 확인) : shapiro(data)
-    1) 정규성 만족  : 단일 표본 검정 : ttest_1samp(data)
+    1) 정규성 만족  : 단일 표본 검정 : ttest_1samp(data, alternative='two-sided')
     2) 정규성 불만족 : 윌콕슨 검정 : wilcoxon(data)
     
 [대응 검정 (모집단 1개, event 전후 검정)]
@@ -149,7 +149,6 @@ stats.mannwhitneyu(A, B, alternative="two-sided")
 
 """ 범주형 데이터 분석 """
 """
-
 [적합도 검정]
 관찰도수와 기대도수의 차이
 ** 확률로 대입하면 안되고, 빈도로 대입해야 한다 **
@@ -157,7 +156,6 @@ stats.mannwhitneyu(A, B, alternative="two-sided")
 [독립성 검정]
 두 변수가 서로 독립적인지 확인 (연관성이 있는지)
 교차표 테이블로 만들기 (지문을 해석하거나, raw_data를 변환해서 / pd.crosstab() 활용)
-
 """
 
 """ 적합도 검정 """
@@ -223,16 +221,18 @@ method : kendall
 - 특정 변수 간 상관관계 분석도 가능
     df['A'].corr(df['B'])
 
-- 상관관계 t-검정
+- 상관관계 t-검정 (stats.pearsonr ... )
 귀무가설 : 상관 없다
 대립가설 : 상관 있다
 
 
 [단순 선형 회귀 분석]
+from statsmodels.formula.api import ols
 -> 주어진 데이터로 종속변수, 독립변수를 설정해서 model을 만들어 주어야 한다
 -> 종속변수 ~ 독립변수
 
 [다중 선형 회귀 분석]
+from statsmodels.formula.api import ols
 -> 종속변수 ~ 독립변수1 + 독립변수2 + 독립변수3 ...
 
 [범주형 변수]
@@ -433,6 +433,10 @@ df = pd.DataFrame({
 
 # one hot encoding, 직접 다중 공산성을 해결하는 parameter
 # B와 C가 모두 0인 경우, A를 나타냄
+"""
+drop_first=True 가 되면, 첫번째 변수가 제거됨
+다중 공산성을 제거
+"""
 df2 = pd.get_dummies(df, drop_first=True)
 print(df2)
 """

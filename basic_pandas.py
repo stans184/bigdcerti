@@ -3,9 +3,8 @@ import numpy as np
 
 # 모든 컬럼을 보여주는 pandas option
 pd.set_option('display.max_columns', None)
-
 # [Tip] 지수표현식(과학적표기법) 사용 X
-pd.options.display.float_format = '{:.5f}'.format
+pd.set_option('dislpay.float_format', '{:.10f}'.format)
 
 # [Tip] set 타입으로 변경하면 비교 가능함
 a = set(X_train['주구매상품'].unique())
@@ -137,6 +136,19 @@ cond1 = cafemenu['할인율'] >= 0.2
 cond2 = cafemenu['칼로리'] < 400
 cafemenu[cond1 | cond2]
 
+""" 조건 변경 """
+# 'Events'가 1일 때, 'Sales'를 80%로 저장
+df.loc[df['Events'] == 1, 'Sales'] = df.loc[df['Events'] == 1, 'Sales']*0.8
+# apply를 사용한 조건 변경
+def event_sales(x):
+    if x['Events'] == 1:
+        x['Sales2'] = x['Sales']*0.8
+    else:
+        x['Sales2'] = x['Sales']
+    return x
+
+df = df.apply(lambda x: event_sales(x), axis=1) #1일 경우 row, 0일 경우 컬럼
+
 """ 누적합 """
 # 예시 데이터프레임 생성
 df = pd.DataFrame({'A': [1, 2, 3, 4]})
@@ -153,6 +165,9 @@ cafemenu.isnull().sum()
 cafemenu['원두'] = cafemenu['원두'].fillna('코스타리카')
 # 최빈값으로 채우기
 X_train['workclass'] = X_train['workclass'].fillna(X_train['workclass'].mode())
+# 앞, 뒤의 값으로 결측치 채우기
+df.fillna(method='bfill')
+df.fillna(method='ffill')
 
 """ 여 존슨, box-cox 변환값 """
 from sklearn.preprocessing import power_transform
@@ -218,9 +233,14 @@ df['날짜'].str[:4]
 """ 행별 총계를 저장하기 """
 # 2번쨰 열 이후를 모두 선택해서
 # 합계를 저장
+# df의 예시를 생각해보면 쉬움
+# ['1학년 수', '2학년 수', '3학년 수'] 의 컬럼이 있는 데이터 프레임일 때
+# 전교생을 알고 싶다면 아래와 같이 행별 총계를 더해서 새로운 column으로 만들 수 있음
+# sum(axis=0) 은 default 값, 즉 해당 column 의 총합을 구하는 것
 df['전교생수'] = df.iloc[:, 2:].sum(axis=1)
 
 """ 가장 큰 값의 index 가져오기 """
+# 특정 column에서 최대값의 index를 가져올 때 편함
 df['교사당학생'].idxmax()
 
 
@@ -286,3 +306,55 @@ def get_nc_data():
     return n_train, n_test, c_train, c_test
 
 n_train, n_test, c_train, c_test = get_nc_data() # 데이터 새로 불러오기
+
+
+""" datetime """
+df['A'] = pd.to_datetime(df['A'])
+df['date'] = pd.to_datetime(df['date'], format='%Y%m%d')
+df['year'] = df['A'].dt.year
+df['month'] = df['A'].dt.month
+df['day'] = df['A'].dt.day
+# 주말과 주중을 구분할 수 있는 함수
+# 둘 다 같은 값을 출력함
+df['dayofweek'] = df['A'].dt.dayofweek
+df['weekday'] = df['A'].dt.weekday
+# 몇번째 주인지 출력
+print(df['date'].dt.isocalendar().week)
+# 일종의 groupby 와 유사한 개념으로 resample이 있음
+# 이거는 시계열 데이터를 대상으로
+# resample('D') 하면 날짜별로
+# resample('W') 하면 주별로
+# resample을 사용하고자 한다면, index가 date 형태로 잡혀있어야 함 (index_col=0)
+df.resample('W').sum()
+
+
+""" 구간분할 """
+# df['age']를 q=3에 맞춰서 나누고, labels에 맞게 지정한 값을 저장
+df['range'] = pd.qcut(df['age'], q=3, labels=['group1','group2','group3'])
+
+
+""" 중복제거 """
+# subset : 중복 제거를 진행할 특정 column 선정
+# keep : 중복 제거 방향
+#   - first : 처음에 나온 행을 남김
+#   - last : 마지막에 나온 행을 남김
+#   - False : 중복된 모든 행 삭제
+df.drop_duplicates(subset=['age'], keep='first', inplace=True)
+
+
+""" 데이터 한칸씩 밀기 / 당기기 """
+df.shift(1)
+
+
+""" 문자열을 건드리고 싶다면 .str """
+df['menu'].str.contains('라떼')
+df['menu'].str.split(" ", '')
+df['menu'].str.replace('a', 'b')
+df['menu'].str[0:4]
+
+
+""" dataframe 녹이기 """
+# melt : wide format 에서 long format으로 변경
+# id_vars : 변환 후에도 유지할 변수들의 열 이름
+# value_vars : long format으로 변환할 변수 이름
+df = pd.melt(df, id_vars=['Name'], value_vars=['수학', '영어'])
