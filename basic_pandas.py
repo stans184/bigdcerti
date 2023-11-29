@@ -158,6 +158,7 @@ cumulative_sum = df['A'].cumsum()
 print(cumulative_sum)
 
 """ 결측치 """
+# 결측치는 최빈값과 차이가 크면 최빈값으로 값이 비슷하면 별도의 값으로 대체함
 # 컬럼별 결측치 확인
 cafemenu.isnull().sum()
 # 결측값 채우기
@@ -275,7 +276,9 @@ df = pd.concat([X_train, y_train['income']], axis=1)
 # train 분리 예시
 X_tr = train.iloc[:, :-1].copy()
 y_tr = train.iloc[:, [0,-1]].copy()
-
+##
+# 리스트에서 리스트 빼기
+cols = list(filter(lambda x : not in list2, list1))
 
 """ IQR """
 # IQR로 확인

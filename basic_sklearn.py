@@ -80,6 +80,15 @@ import pandas as pd
 train = pd.get_dummies(train, columns=cols)
 test = pd.get_dummies(test, columns=cols)
 
+
+""" 결측치를 채우는 class """
+# 결측치의 파악에는 domain knowledge 중요
+# 결측치 삭제는 왠만하면 하지 말길, 리스크가 있다
+from sklearn.impute import SimpleImputer
+imp = SimpleImputer()
+X_train = imp.fit_transform(X_train)
+X_test = imp.transform(X_test)
+
 """ ML model """
 # ML model을 학습시키기 전에, 전처리를 하는 과정이 필요하다
 # 모든 feature에 대해서 engineering 후 투입하는 것보다, 기초적인 결측치 처리만 수행한 baseline을 기준으로 option을 넣어가며 결과 비교
