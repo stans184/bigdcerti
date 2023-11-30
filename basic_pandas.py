@@ -78,6 +78,8 @@ data = {
 }
 cafemenu = pd.DataFrame(data)
 cafemenu.info()
+# 데이터프레임 선택 (가격) => 대괄호를 2번 하면 dataframe으로 선택됨
+cafemenu[['price']]
 # 자료형 변환 / astype /  object -> float
 cafemenu['할인율'] = cafemenu['할인율'].astype(float)
 # 할인가 컬럼 추가
@@ -94,6 +96,7 @@ cafemenu = cafemenu.drop(3, axis=0)
 # dropna : null 값이 들어 있는 axis=0, 행을 아예 삭제시킴
 cafemenu.dropna()
 # 특정컬럼에 결측치가 있으면 데이터(행) 삭제 subset=['native.country']
+# 특정 row만 삭제할 때는 axis=0
 df = X_train.dropna(subset=['native.country', 'workclass'])
 # 결측치가 있는 컬럼 삭제 dropna(axis=1)
 # 잘 없음, 컬럼은 결국 feature 인데, 이걸 다 날려버리기 떄문
@@ -135,6 +138,9 @@ cafemenu[cond1 & cond2]
 cond1 = cafemenu['할인율'] >= 0.2
 cond2 = cafemenu['칼로리'] < 400
 cafemenu[cond1 | cond2]
+# 어떤 조건 이외의 값들
+cafemenu[~cond1]
+
 
 """ 조건 변경 """
 # 'Events'가 1일 때, 'Sales'를 80%로 저장
@@ -149,6 +155,7 @@ def event_sales(x):
 
 df = df.apply(lambda x: event_sales(x), axis=1) #1일 경우 row, 0일 경우 컬럼
 
+
 """ 누적합 """
 # 예시 데이터프레임 생성
 df = pd.DataFrame({'A': [1, 2, 3, 4]})
@@ -156,6 +163,7 @@ df = pd.DataFrame({'A': [1, 2, 3, 4]})
 cumulative_sum = df['A'].cumsum()
 # 결과 확인
 print(cumulative_sum)
+
 
 """ 결측치 """
 # 결측치는 최빈값과 차이가 크면 최빈값으로 값이 비슷하면 별도의 값으로 대체함
@@ -170,11 +178,13 @@ X_train['workclass'] = X_train['workclass'].fillna(X_train['workclass'].mode())
 df.fillna(method='bfill')
 df.fillna(method='ffill')
 
+
 """ 여 존슨, box-cox 변환값 """
 from sklearn.preprocessing import power_transform
 data = [[11, 12], [23, 22], [34, 35]]
 print(power_transform(data)) # method 디폴트 값은 여-존슨’yeo-johnson’
 print(power_transform(data, method='box-cox'))
+
 
 """ 값 변경 """
 # 문자 변경 : 아메리카노 -> 룽고, 녹차 -> 그린티
@@ -184,6 +194,9 @@ df = cafemenu.str.replace('블랙', '화이트')
 # 문자 변경2 : dict을 이용한 변경
 d = {'롱고' : '아메리카노', '그린티' : '녹차'}
 cafemenu = cafemenu.replace(d)
+# map을 활용한 변경
+dict_list = {np.nan : 0, 'silver' : 1, 'gold' : 2, 'vip' : 3}
+df = df.map(dict_list)
 
 
 """ * pandas 내장함수 * """
@@ -226,10 +239,11 @@ df[cond]
 df['가격'].quantile(0.75)
 # 최빈값
 df['원두'].mode()[0]
-
-df['날짜'] = pd.to_datetime(df['날짜'], format='%Y년 %m월')
 # 혹은, string으로 취급해서 slicing 하기
 df['날짜'].str[:4]
+# 트랜스포스, 행과 열을 바꿔버림
+df = df.T
+
 
 """ 행별 총계를 저장하기 """
 # 2번쨰 열 이후를 모두 선택해서
@@ -239,6 +253,7 @@ df['날짜'].str[:4]
 # 전교생을 알고 싶다면 아래와 같이 행별 총계를 더해서 새로운 column으로 만들 수 있음
 # sum(axis=0) 은 default 값, 즉 해당 column 의 총합을 구하는 것
 df['전교생수'] = df.iloc[:, 2:].sum(axis=1)
+
 
 """ 가장 큰 값의 index 가져오기 """
 # 특정 column에서 최대값의 index를 가져올 때 편함
@@ -271,7 +286,7 @@ df.groupby(['원두', '할인율']).mean().reset_index()
 """ 데이터 합치기 & 분리하기 """
 # X_train y_train 합치는 것 예시
 # axis 설정 필수, 0은 행을 기준으로(밑으로), 1은 열을 기준으로(옆으로)
-# 합치고자 하는 데이터를 []로 감싸서 진행
+# 합치고자 하는 데이터를 []로 감싸서 진행 -> dataframe끼리만 가능
 df = pd.concat([X_train, y_train['income']], axis=1)
 # train 분리 예시
 X_tr = train.iloc[:, :-1].copy()
@@ -279,6 +294,7 @@ y_tr = train.iloc[:, [0,-1]].copy()
 ##
 # 리스트에서 리스트 빼기
 cols = list(filter(lambda x : not in list2, list1))
+
 
 """ IQR """
 # IQR로 확인
@@ -314,15 +330,53 @@ n_train, n_test, c_train, c_test = get_nc_data() # 데이터 새로 불러오기
 """ datetime """
 df['A'] = pd.to_datetime(df['A'])
 df['date'] = pd.to_datetime(df['date'], format='%Y%m%d')
+df['날짜'] = pd.to_datetime(df['날짜'], format='%Y년 %m월')
 df['year'] = df['A'].dt.year
 df['month'] = df['A'].dt.month
 df['day'] = df['A'].dt.day
+df['hour'] = df['DateTime4'].dt.hour
+df['minute'] = df['DateTime4'].dt.minute
+df['second'] = df['DateTime4'].dt.second
+
+# Date2 (year 4자리: %Y) ex) 2024:02:18
+df['Date2'] = pd.to_datetime(df['Date2'], format='%Y:%m:%d')
+# Date3 (year 2자리: %y) ex) 24/02/17
+df['Date3'] = pd.to_datetime(df['Date3'], format='%y/%m/%d')
+# 18-Feb-2024 -> format 지정 안해줘도 됨
+# ex) 24-02-17 11:45:30
+df['DateTime1'] = pd.to_datetime(df['DateTime1'], format='%y-%m-%d %H:%M:%S')
+
+# [참고] 기간 to_period()
+print(df['DateTime4'].dt.to_period('Y')) # 2024
+print(df['DateTime4'].dt.to_period('Q')) # 2024Q1
+print(df['DateTime4'].dt.to_period('M')) # 2024-02
+print(df['DateTime4'].dt.to_period('D')) # 2024-02-17
+print(df['DateTime4'].dt.to_period('H')) # 2024-02-17 11:00
+
 # 주말과 주중을 구분할 수 있는 함수
 # 둘 다 같은 값을 출력함
-df['dayofweek'] = df['A'].dt.dayofweek
+# 요일 dayofweek 0:월, 1:화, 2:수, 3:목, 4:금, 5:토, 6:일
+df['DateTime4'].dt.dayofweek
 df['weekday'] = df['A'].dt.weekday
+
 # 몇번째 주인지 출력
 print(df['date'].dt.isocalendar().week)
+
+# timedelta : 특정 시간 이후, 이전
+# 시간 +/- (3주, 3일, 3시간, 3분, 3초 이전과 이후)
+delta = pd.Timedelta(weeks=3, days=3, hours=3, minutes=3, seconds=3)
+print(df['DateTime4'] - delta)
+
+# timedelta64
+# datetime 자료형의 차이
+# total_seconds() : 총 기간을 초로 환산
+# days : 몇 일 간격인지만 보여줌
+# seconds : 시간 간격의 단위만 초로 바꿔서 보여줌
+print(df['diff'])
+print(df['diff'].dt.total_seconds())
+print(df['diff'].dt.days)
+print(df['diff'].dt.seconds)
+
 # 일종의 groupby 와 유사한 개념으로 resample이 있음
 # 이거는 시계열 데이터를 대상으로
 # resample('D') 하면 날짜별로

@@ -1,8 +1,8 @@
 """ 작업형 3 """
 """
-- 지지도(A,B): A와 B가 함께 팔린 거래 횟수 / 전체 거래 횟수
-- 신뢰도(A->B): A와 B가 함께 팔린 거래 횟수 / A가 팔린 거래 횟수
-- 향상도(A,B): 신뢰도(A->B) / 지지도(B)
+- 지지도(A,B)  : A와 B가 함께 팔린 거래 횟수 / 전체 거래 횟수
+- 신뢰도(A->B) : A와 B가 함께 팔린 거래 횟수 / A가 팔린 거래 횟수
+- 향상도(A,B)  : 신뢰도(A->B) / 지지도(B)
 
 basic theory
 
@@ -67,6 +67,7 @@ stats.shapiro(df['무게'])
 # Wilcoxon(윌콕슨)의 부호 순위 검정 수행
 # p-value < 0.05 : 대립가설 채택
 # p-value > 0.05 : 귀무가설 채택
+# alternative 사용법은 ttest_1samp과 동일
 from scipy import stats
 stats.wilcoxon(df['무게'] - 120, alternative='less')
 
@@ -75,7 +76,6 @@ stats.wilcoxon(df['무게'] - 120, alternative='less')
 # μd = (before – after)의 평균
 # 귀무가설: μd ≥ 0, 새로운 교육 프로그램은 효과가 없다.
 # 대립가설: μd < 0, 새로운 교육 프로그램은 효과가 있다.
-
 # 대응표본검정
 # alternative : 앞의 데이터가, 뒤의 데이터에 비해서 어떠한가
 # 전, 후 데이터의 위치를 잘 넣어야 함
@@ -155,6 +155,7 @@ stats.mannwhitneyu(A, B, alternative="two-sided")
 """
 [적합도 검정]
 관찰도수와 기대도수의 차이
+두 데이터가 유사성을 가지고 있는지
 ** 확률로 대입하면 안되고, 빈도로 대입해야 한다 **
 
 [독립성 검정]
@@ -217,7 +218,7 @@ df_d = pd.crosstab(df['합격여부'], df['언어'])
 """ 2. 회귀 분석 """
 """
 [상관관계 분석]
-DataFrame.corr() 읉 통해 상관관계를 알 수 있다
+DataFrame.corr(method=) 읉 통해 상관관계를 알 수 있다
 method : pearson (default)
 method : spearman
 method : kendall
@@ -225,7 +226,7 @@ method : kendall
 - 특정 변수 간 상관관계 분석도 가능
     df['A'].corr(df['B'])
 
-- 상관관계 t-검정 (stats.pearsonr ... )
+- 상관관계 t-검정 (stats.pearsonr / stats.spearmanr / stats.kendalltau)
 귀무가설 : 상관 없다
 대립가설 : 상관 있다
 
@@ -397,10 +398,10 @@ Notes:
 model.rsquared
 # 회귀계수 (기울기)
 # param 과 params의 차이
-model.param # 전체
-model.param['광고비']
-model.param['플랫폼']
-model.param['Intercept']
+model.params # 전체
+model.params['광고비']
+model.params['플랫폼']
+model.params['Intercept']
 # p-value
 model.pvalues['광고비']
 model.pvalues['플랫폼']
@@ -444,12 +445,13 @@ drop_first=True 가 되면, 첫번째 변수가 제거됨
 df2 = pd.get_dummies(df, drop_first=True)
 print(df2)
 """
+유형B와 유형C가 모두 0이면 유형A로 판단
 	매출액	광고비	플랫폼	투자	유형_B	유형_C
-0	300	70	15	100	1	0
-1	320	75	16	0	1	0
-2	250	30	14	200	0	1
-3	360	80	20	0	0	0
-4	315	72	19	10	1	0
+0	300	    70	  15	100	    1	0
+1	320	    75	  16	0	    1	0
+2	250	    30	  14	200	    0	1
+3	360	    80    20	0	    0	0
+4	315	    72	  19	10	    1	0
 """
 
 # ols 자체적으로 해결해주기도 함
@@ -641,7 +643,7 @@ group1 group2   stat   pval  pval_corr reject
 ---------------------------------------------
 """
 
-""" 크루스칼-왈리스 검정 (비모수 검정) : 정규성을 만족하지 않을 때 """
+""" 크루스칼-왈리스 검정 (비모수 검정) : 정규성을 만족하지 않을 때 분산 분석 """
 print(stats.kruskal(df['A']. df['B'], df['C'], df['D']))
 
 
