@@ -4,7 +4,7 @@ import numpy as np
 # 모든 컬럼을 보여주는 pandas option
 pd.set_option('display.max_columns', None)
 # [Tip] 지수표현식(과학적표기법) 사용 X
-pd.set_option('dislpay.float_format', '{:.10f}'.format)
+pd.set_option('display.float_format', '{:5f}'.format)
 
 # [Tip] set 타입으로 변경하면 비교 가능함
 a = set(X_train['주구매상품'].unique())
@@ -293,7 +293,7 @@ X_tr = train.iloc[:, :-1].copy()
 y_tr = train.iloc[:, [0,-1]].copy()
 ##
 # 리스트에서 리스트 빼기
-cols = list(filter(lambda x : not in list2, list1))
+cols = list(filter(lambda x : x not in list2, list1))
 
 
 """ IQR """
@@ -387,6 +387,7 @@ df.resample('W').sum()
 
 """ 구간분할 """
 # df['age']를 q=3에 맞춰서 나누고, labels에 맞게 지정한 값을 저장
+# 데이터를 분위수를 기준으로 q값만큼 분할해서 저장
 df['range'] = pd.qcut(df['age'], q=3, labels=['group1','group2','group3'])
 
 
@@ -415,3 +416,10 @@ df['menu'].str[0:4]
 # id_vars : 변환 후에도 유지할 변수들의 열 이름
 # value_vars : long format으로 변환할 변수 이름
 df = pd.melt(df, id_vars=['Name'], value_vars=['수학', '영어'])
+"""
+0 민수 수학 54
+1 철수 수학 87
+2 영희 영어 43
+3 민수 영어 86
+4 영희 수학 65
+"""

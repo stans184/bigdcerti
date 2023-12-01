@@ -11,7 +11,7 @@
 2. target값 분포 파악
 3. info()로 데이터 형태 파악
 4. isnull().sum() / isna().sum() 결측치 파악
-5. describe() 수치형 이상치 파악
+5. describe() 수치형 이상치 파악 및 scaling, log
 6. object 자료형 처리
 7. model seperation
 8. ML model
@@ -62,11 +62,11 @@ np.exp(np.log1p(X_train['fnlwgt'])).hist()
 # 각 범주의 성향을 파악하고 하면 더 좋음
 """
 1. train 과 test 모두 category가 같다면 
-    > one-hot encoding과 labelencoding 모두 상관없음
+    > one-hot encoding, labelencoding 모두 상관없음
 2. train의 범주가 test의 범주를 포함한다
     > LabelEncoding 하거나, 두 범주를 합쳐서(pd.concat) one-hot encoding
 3. test의 범주가 train을 포함하거나, 카테고리가 좀 다르다면
-    > 두 범주를 합쳐서(pd.concat) Encoding을 진행하고 다시 분리
+    > 두 범주를 합쳐서(pd.concat) Encoding 진행하고 다시 분리
 """
 ## category로 변경 (lightgbm)
 ## Series.astype('category').cat.codes
@@ -223,6 +223,8 @@ print(recall_score())
 # predict_proba로 나온 결과 중, 1이 나올 확률로 비교해야 함
 from sklearn.metrics import roc_auc_score
 roc_auc_score(y_true=, model.predict_proba[:, 1])
+# multi_class 변수의 기본값은 ovr
+roc_auc_score(y_true, y_prob, multi_class='ovr', labels=['A', 'B', 'C'])
 
 # F1 스코어(F1 Score) *** 필수암기, 높으면 좋음
 from sklearn.metrics import f1_score
